@@ -242,6 +242,40 @@ class NotificationService {
     }
   }
 
+  /// Generic Notification Method for OTA & In-App Alerts
+  Future<void> showNotification({
+    int? id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    try {
+      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        'juiceflow_factory_channel',
+        'Factory & Batch Alerts',
+        channelDescription: 'Factory floor operations & cloud updates',
+        importance: Importance.high,
+        priority: Priority.high,
+        showWhen: true,
+        enableVibration: true,
+        playSound: true,
+      );
+
+      const NotificationDetails platformDetails =
+          NotificationDetails(android: androidDetails);
+
+      await _notificationsPlugin.show(
+        id: id ?? ((DateTime.now().millisecondsSinceEpoch ~/ 1000) % 100000),
+        title: title,
+        body: body,
+        notificationDetails: platformDetails,
+        payload: payload,
+      );
+    } catch (e) {
+      debugPrint('Error showing generic notification: $e');
+    }
+  }
+
   /// Send immediate test notification
   Future<void> sendTestNotification() async {
     await showFactoryAlert(

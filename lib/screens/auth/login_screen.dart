@@ -8,6 +8,7 @@ import '../../providers/app_state_provider.dart';
 import '../customer/customer_store_screen.dart';
 import '../main_navigation_screen.dart';
 import '../setup/setup_wizard_screen.dart';
+import '../../widgets/juiceflow_brand_header.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -167,48 +168,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
                 const SizedBox(height: 12),
 
-                // Brand Emblem
-                Center(
-                  child: Container(
-                    width: 76,
-                    height: 76,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.secondary.withOpacity(0.35),
-                          blurRadius: 18,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        'assets/images/logo_3d.jpg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, err, stack) => Container(
-                          color: AppColors.primary,
-                          child: const Icon(
-                            Icons.local_drink_rounded,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Center(
-                  child: Text(
-                    loc.translate('appName'),
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.3,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                    ),
+                const Center(
+                  child: JuiceflowBrandHeader(
+                    logoSize: 84,
+                    showTagline: false,
                   ),
                 ),
                 const SizedBox(height: 2),

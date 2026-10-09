@@ -5,6 +5,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../providers/app_state_provider.dart';
 import '../widgets/juice_flowing_3d_tumbler.dart';
+import '../widgets/juiceflow_brand_header.dart';
 import 'auth/login_screen.dart';
 import 'main_navigation_screen.dart';
 
@@ -101,71 +102,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 opacity: _logoFade,
                 child: ScaleTransition(
                   scale: _logoScale,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Modern 3D Logo Container with Glow
-                      Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.secondary.withOpacity(0.4),
-                              blurRadius: 36,
-                              spreadRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(70),
-                          child: Image.asset(
-                            'assets/images/logo_3d.jpg',
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, err, stack) => Container(
-                              color: AppColors.primary,
-                              child: const Icon(
-                                Icons.local_drink_rounded,
-                                size: 68,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        AppConstants.appName,
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
-                          color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'SMART JUICE FACTORY OS',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 4,
-                          color: AppColors.secondary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        appState.locale.languageCode == 'ta'
-                            ? AppConstants.appTaglineTa
-                            : AppConstants.appTaglineEn,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
-                    ],
+                  child: JuiceflowBrandHeader(
+                    logoSize: 135,
+                    isTamil: appState.locale.languageCode == 'ta',
                   ),
                 ),
               ),
