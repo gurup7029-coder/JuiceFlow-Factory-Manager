@@ -231,12 +231,17 @@ class SettingsScreen extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: () async {
                           await dataProvider.seedRealisticFactoryData();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Factory sample data reloaded!')),
-                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('🌿 Factory initialized: 4 juices, 5 raw materials, 1 active line!'),
+                                backgroundColor: Color(0xFF10B981),
+                              ),
+                            );
+                          }
                         },
                         icon: const Icon(Icons.dataset_outlined, size: 16),
-                        label: const Text('Reload Demo Data', style: TextStyle(fontSize: 12)),
+                        label: const Text('Fresh Startup State', style: TextStyle(fontSize: 11)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -245,12 +250,17 @@ class SettingsScreen extends StatelessWidget {
                         style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
                         onPressed: () async {
                           await dataProvider.resetAllData();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Data reset to factory defaults!')),
-                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Factory data reset to Day-1 baseline!'),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
                         },
                         icon: const Icon(Icons.restore, size: 16),
-                        label: const Text('Reset Data', style: TextStyle(fontSize: 12)),
+                        label: const Text('Reset All Data', style: TextStyle(fontSize: 11)),
                       ),
                     ),
                   ],

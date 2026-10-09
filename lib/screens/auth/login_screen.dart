@@ -372,10 +372,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           runSpacing: 6,
           alignment: WrapAlignment.center,
           children: [
-            _demoRoleChip('👑 Owner', AppConstants.roleAdmin),
-            _demoRoleChip('👔 Manager', AppConstants.roleManager),
-            _demoRoleChip('🏭 Production', AppConstants.roleProduction),
-            _demoRoleChip('📦 Inventory', AppConstants.roleInventory),
+            _demoRoleChip('👑 Owner', AppConstants.roleAdmin, 'admin@juiceflow.com'),
+            _demoRoleChip('👔 Manager', AppConstants.roleManager, 'manager@juiceflow.com'),
+            _demoRoleChip('💼 Sales', AppConstants.roleSales, 'sales@juiceflow.com'),
+            _demoRoleChip('🏭 Production', AppConstants.roleProduction, 'production@juiceflow.com'),
+            _demoRoleChip('📦 Inventory', AppConstants.roleInventory, 'inventory@juiceflow.com'),
           ],
         ),
         const SizedBox(height: 14),
@@ -398,11 +399,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _demoRoleChip(String label, String role) {
+  Widget _demoRoleChip(String label, String role, String email) {
     return ActionChip(
       label: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
       onPressed: () {
-        setState(() => _selectedRole = role);
+        setState(() {
+          _selectedRole = role;
+          _emailController.text = email;
+          _passwordController.text = 'factory@2026';
+        });
         _handleProducerLogin();
       },
     );

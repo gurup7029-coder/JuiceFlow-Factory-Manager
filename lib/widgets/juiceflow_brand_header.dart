@@ -65,7 +65,7 @@ class JuiceflowBrandHeader extends StatelessWidget {
                 child: Image.asset(
                   'assets/images/logo_3d.jpg',
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (context, error, stackTrace) => Container(
                     color: AppColors.primary,
                     child: Icon(
                       Icons.local_drink_rounded,
