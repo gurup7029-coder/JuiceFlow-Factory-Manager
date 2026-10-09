@@ -1,0 +1,13 @@
+# Shorebird Code Push Configuration
+# Shorebird allows Over-The-Air (OTA) Dart code patching directly to installed devices
+# without needing to rebuild or reinstall the APK.
+#
+# To initialize or push patches:
+# 1. Install Shorebird CLI: iwr -useb https://raw.githubusercontent.com/shorebirdtech/install/main/install.ps1 | iex
+# 2. Login: shorebird login
+# 3. Create initial release: shorebird release android
+# 4. For subsequent code updates (Over-The-Air without reinstall):
+#    shorebird patch android
+#
+app_id: juiceflow-factory-manager
+auto_update: true

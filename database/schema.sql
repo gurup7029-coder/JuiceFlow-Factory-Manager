@@ -284,3 +284,30 @@ CREATE POLICY "Allow authenticated write batches" ON production_batches FOR ALL 
 
 CREATE POLICY "Allow authenticated read orders" ON sales_orders FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Allow authenticated write orders" ON sales_orders FOR ALL TO authenticated USING (true);
+
+-- ==============================================================================
+-- 16. OVER-THE-AIR (OTA) APP RELEASES & REMOTE CONFIGURATION
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS app_releases (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    version VARCHAR(20) NOT NULL UNIQUE,
+    build_number INT NOT NULL,
+    release_name VARCHAR(150) NOT NULL,
+    release_notes TEXT,
+    download_url TEXT NOT NULL,
+    is_mandatory BOOLEAN DEFAULT false,
+    file_size_bytes BIGINT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS remote_configs (
+    key VARCHAR(100) PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE app_releases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE remote_configs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read app_releases" ON app_releases FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow public read remote_configs" ON remote_configs FOR SELECT TO anon, authenticated USING (true);

@@ -138,7 +138,44 @@ class _CloudUpdateCardState extends State<CloudUpdateCard> {
         behavior: SnackBarBehavior.floating,
       ),
     );
-    await _updateService.downloadUpdate(release);
+    final filePath = await _updateService.downloadUpdate(release);
+    if (!mounted) return;
+
+    if (filePath != null) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.check_circle, color: AppColors.success),
+              SizedBox(width: 8),
+              Text('Update Downloaded'),
+            ],
+          ),
+          content: Text(
+            'JuiceFlow v${release.version} is ready to install! Tap below to update in-place without PC connection.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Dismiss'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                _updateService.installDownloadedApk(path: filePath);
+              },
+              icon: const Icon(Icons.install_mobile, size: 16),
+              label: const Text('Install Now'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _showOtaArchitectureSheet() {

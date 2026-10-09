@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
@@ -232,6 +233,28 @@ class CloudUpdateService {
       _status = UpdateStatus.error;
       _statusController.add(_status);
       return null;
+    }
+  }
+
+  static const MethodChannel _updaterChannel = MethodChannel('com.juiceflow.app/updater');
+
+  /// Launch Android Package Installer to install downloaded APK in-place
+  Future<bool> installDownloadedApk({String? path}) async {
+    final apkPath = path ?? _downloadedFilePath;
+    if (apkPath == null || !File(apkPath).existsSync()) {
+      _errorMessage = 'APK file not found for installation.';
+      return false;
+    }
+
+    try {
+      final bool? success = await _updaterChannel.invokeMethod<bool>('installApk', {
+        'filePath': apkPath,
+      });
+      return success ?? false;
+    } catch (e) {
+      debugPrint('Install APK error: $e');
+      _errorMessage = 'Installation launch failed: $e';
+      return false;
     }
   }
 
