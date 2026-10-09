@@ -1,0 +1,68 @@
+name: JuiceFlow OTA Cloud Release Builder
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build APK and Publish OTA Cloud Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Android APK
+        run: flutter build apk --release
+
+      - name: Rename APK for OTA Delivery
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/juiceflow_factory_manager_latest.apk
+
+      - name: Generate Release Tag & Name
+        id: vars
+        run: |
+          echo "tag_name=v1.0.$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+          echo "release_date=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release & Upload OTA APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag_name }}
+          name: "JuiceFlow Cloud Release ${{ steps.vars.outputs.tag_name }}"
+          body: |
+            ### ⚡ JuiceFlow Factory Manager OTA Cloud Update
+            - **Published At**: ${{ steps.vars.outputs.release_date }}
+            - **Commit**: ${{ github.sha }}
+            - **Installation**: This release is automatically detected by installed JuiceFlow devices over-the-air.
+          draft: false
+          prerelease: false
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/flutter-apk/juiceflow_factory_manager_latest.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
