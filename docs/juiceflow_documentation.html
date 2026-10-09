@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JuiceFlow Factory Manager & Store — Master System Documentation</title>
+  <style>
+    :root {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      --border-hover: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-subtle: #64748B;
+      --accent-green: #10B981;
+      --accent-green-light: #ECFDF5;
+      --accent-amber: #F59E0B;
+      --accent-amber-light: #FFFBEB;
+      --accent-blue: #2563EB;
+      --accent-blue-light: #EFF6FF;
+      --accent-purple: #7C3AED;
+      --accent-purple-light: #F5F3FF;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* Container & Layout */
+    .doc-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .doc-sidebar {
+      width: 320px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 20px;
+      flex-shrink: 0;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: white;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-green);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .toc-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-subtle);
+      margin: 16px 0 8px 8px;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-item a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .toc-item a:hover {
+      background: #FFFFFF;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-item.active a {
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    /* Main Content Area */
+    .doc-main {
+      flex: 1;
+      padding: 48px 60px;
+      max-width: 1200px;
+      background: var(--bg-primary);
+    }
+
+    /* Document Header Banner */
+    .doc-hero {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      margin-bottom: 48px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-hero::after {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .doc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .doc-hero h1 {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.8px;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .doc-hero p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 820px;
+      line-height: 1.6;
+    }
+
+    .meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-subtle);
+    }
+
+    /* Section Typography */
+    section {
+      margin-bottom: 64px;
+      scroll-margin-top: 30px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--bg-secondary);
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 24px 0 10px 0;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    /* Feature Grid / Cards */
+    .feature-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+
+    /* Screenshot Presentation Layout */
+    .screenshot-showcase {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 32px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin: 28px 0;
+      align-items: start;
+    }
+
+    .phone-mockup {
+      width: 100%;
+      background: #FFFFFF;
+      border: 8px solid #0F172A;
+      border-radius: 36px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-mockup img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .screenshot-details {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .screen-badge {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-subtle);
+    }
+
+    .screen-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .screen-description {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Options / Action Breakdown Table */
+    .options-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .options-table th {
+      background: #F1F5F9;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .options-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    .options-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .options-table td.option-name {
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-green { background: var(--accent-green-light); color: var(--accent-green); }
+    .badge-amber { background: var(--accent-amber-light); color: var(--accent-amber); }
+    .badge-blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+    .badge-purple { background: var(--accent-purple-light); color: var(--accent-purple); }
+
+    /* Workflow Diagram */
+    .workflow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .step-content p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Print Optimization */
+    @media print {
+      .doc-sidebar { display: none; }
+      .doc-main { padding: 0; max-width: 100%; }
+      .screenshot-showcase { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="doc-layout">
+  <!-- Sidebar Navigation -->
+  <aside class="doc-sidebar">
+    <div class="brand-header">
+      <div class="brand-icon">🥤</div>
+      <div>
+        <div class="brand-title">JuiceFlow</div>
+        <div class="brand-sub">Master Manual</div>
+      </div>
+    </div>
+
+    <div class="toc-title">1. Getting Started</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#system-overview">📋 System Overview</a></li>
+      <li class="toc-item"><a href="#3d-splash">✨ 3D Fluid Tumbler Intro</a></li>
+      <li class="toc-item"><a href="#dual-login">🔑 Dual-Role Login Portal</a></li>
+    </ul>
+
+    <div class="toc-title">2. Customer Storefront</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#customer-store">🛒 Juice Catalog & Quantities</a></li>
+      <li class="toc-item"><a href="#customer-checkout">🧾 Live Auto-Bill & Payment</a></li>
+    </ul>
+
+    <div class="toc-title">3. Factory Operations</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#dashboard">📊 Real-Time Factory Dashboard</a></li>
+      <li class="toc-item"><a href="#production">🏭 Production & Batch Tracker</a></li>
+      <li class="toc-item"><a href="#inventory">📦 Inventory & Raw Materials</a></li>
+      <li class="toc-item"><a href="#orders">🚚 Sales Orders & Dispatch</a></li>
+      <li class="toc-item"><a href="#suppliers">🌾 Fruit Suppliers Directory</a></li>
+    </ul>
+
+    <div class="toc-title">4. Advanced Tech & Lab</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#recipe-formulation">🧪 Recipe Formulation (BOM)</a></li>
+      <li class="toc-item"><a href="#label-designer">🏷️ Smart Label & Barcode Designer</a></li>
+      <li class="toc-item"><a href="#iot-telemetry">📡 IoT Pasteurizer Telemetry</a></li>
+      <li class="toc-item"><a href="#ai-engine">🧠 AI Demand Forecasting</a></li>
+      <li class="toc-item"><a href="#brix-calc">🔬 Brix Refractometer Calculator</a></li>
+      <li class="toc-item"><a href="#qr-scanner">📷 Batch QR Laser Scanner</a></li>
+      <li class="toc-item"><a href="#maintenance">🧼 Factory CIP & HACCP Logs</a></li>
+    </ul>
+
+    <div class="toc-title">5. Settings & Notifications</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#settings">⚙️ Settings & Factory Profile</a></li>
+      <li class="toc-item"><a href="#notifications">🔔 Native Background Alerts</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="doc-main">
+
+    <!-- Document Header -->
+    <div class="doc-hero">
+      <div class="doc-tag">🌟 Enterprise Product Guide — Light Edition</div>
+      <h1>JuiceFlow Factory Manager & Customer Store</h1>
+      <p>A comprehensive, top-to-end technical manual and operational guide for the complete JuiceFlow ecosystem: featuring industrial food manufacturing ERP, IoT plant monitoring, AI demand analytics, native background push notifications, and a direct-to-consumer automated juice storefront.</p>
+
+      <div class="meta-badges">
+        <div class="meta-pill">📱 <strong>Platform:</strong> Flutter (Android 16 / iOS / Web)</div>
+        <div class="meta-pill">🏢 <strong>Enterprise:</strong> FSSAI & HACCP Compliant</div>
+        <div class="meta-pill">🌐 <strong>Language:</strong> English & தமிழ் Bilingual</div>
+        <div class="meta-pill">🔔 <strong>Background Engine:</strong> Native Push Notifications</div>
+      </div>
+    </div>
+
+    <!-- 1. SYSTEM OVERVIEW -->
+    <section id="system-overview">
+      <h2>1. System Architecture & Dual-Portal Paradigm</h2>
+      <p>JuiceFlow is built with a unified dual-portal architecture that bridges the entire beverage supply chain into a single cohesive mobile application:</p>
+
+      <div class="workflow-steps">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>🏭 Factory Producer & Operations Portal</h4>
+            <p>Designed for the factory owner, production supervisors, lab chemists, and inventory controllers. Manages raw fruit procurement, Brix sugar titrations, HTST pasteurization telemetry, batch traceability certificates, worker rosters, and cold-chain reefer van dispatch.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>🥤 Customer Storefront & Live Auto-Billing Portal</h4>
+            <p>Designed for retail consumers, cafes, supermarkets, and catering clients. Enables selecting fresh juice varieties, specifying custom bottle quantities or bulk crates, instant auto-generated tax billing with 5% GST, multi-mode digital payments (UPI, Cards, COD), and live order status tracking.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>🔔 24/7 Phone Notification & Cold-Chain Monitor</h4>
+            <p>Native Android notification service with dedicated high-priority channels. Triggers audio alerts and vibrations on the phone for newly received customer orders, critical low stock thresholds, and periodic hourly cold-chain health checks even when the app is terminated.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 3D FLUID TUMBLER INTRO -->
+    <section id="3d-splash">
+      <h2>2. Interactive 3D Fluid Tumbler Experience</h2>
+      <p>When the application launches, users are greeted with an authentic 3D fluid simulation representing fresh juice extracted from whole fruits streaming smoothly into a glass tumbler with dynamic fluid physics and particle spray.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/tumbler_screen.png" alt="3D Fluid Tumbler Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Splash & Visual Engine</div>
+          <h3 class="screen-title">Interactive 3D Fluid Pour Simulation</h3>
+          <p class="screen-description">Simulates dynamic liquid mechanics with real-time fruit particle streams, foam head accumulation, and glass refraction optics. Allows users to switch juice flavors dynamically.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Control / Element</th><th>Function & Behavior</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Fruit Selectors</td>
+                <td>Switch between Alphonso Mango (Amber), Nagpur Orange (Citrus), Apple, and Guava liquid viscosities.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Fill Level Physics</td>
+                <td>Dynamic sine-wave surface agitation with floating bubbles that rise as the tumbler fills to 500ml.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Auto-Advance / Skip</td>
+                <td>Seamlessly transitions with a smooth fade-in reveal into the main portal upon reaching capacity.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DUAL-ROLE LOGIN PORTAL -->
+    <section id="dual-login">
+      <h2>3. Dual-Role Authentication & Access Control</h2>
+      <p>The login screen cleanly separates the application into two distinct workflows via top navigation tabs:</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/login_producer_screen.png" alt="Producer Login Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Role Access • Producer Mode</div>
+          <h3 class="screen-title">Factory Producer & Staff Login</h3>
+          <p class="screen-description">Enables staff authentication with specialized RBAC privileges according to their role in the factory.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Option</th><th>Role Privilege</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">👑 Owner (Admin)</td>
+                <td>Complete administrative access across all factory analytics, profit margins, audit logs, and configurations.</td>
+              </tr>
+              <tr>
+                <td class="option-name">👔 Factory Manager</td>
+                <td>Production approvals, staff shift scheduling, batch releases, and customer credit ledger adjustments.</td>
+              </tr>
+              <tr>
+                <td class="option-name">🏭 Production Supervisor</td>
+                <td>Machine start/stop, CIP washdown records, Brix lab testing, and batch packaging logs.</td>
+              </tr>
+              <tr>
+                <td class="option-name">📦 Inventory In-Charge</td>
+                <td>Raw material stock-in/out, PET bottle counts, wastage write-offs, and supplier receipts.</td>
+              </tr>
+              <tr>
+                <td class="option-name">💼 Sales Executive</td>
+                <td>Retail orders, invoice generation, WhatsApp payment reminders, and dispatch manifests.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CUSTOMER STOREFRONT & ORDERING -->
+    <section id="customer-store">
+      <h2>4. Customer Storefront & Quantity Selection</h2>
+      <p>The customer storefront provides direct factory-to-consumer purchasing with real-time stock availability, bottle sizing, and customized volume selection.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/customer_store_screen.png" alt="Customer Store Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Direct Storefront</div>
+          <h3 class="screen-title">Fresh Juice Menu & Volume Stepper</h3>
+          <p class="screen-description">A clean, high-contrast catalog featuring cold-pressed juices bottled directly at the plant with zero preservatives.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Catalog Feature</th><th>Operational Mechanism</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Category Filter Pills</td>
+                <td>Filter by "All", "Pure Juice", "Nectar", "Cold Pressed", and "Seasonal Specials".</td>
+              </tr>
+              <tr>
+                <td class="option-name">Interactive Stepper [ - | + ]</td>
+                <td>Allows customer to choose any exact number of bottles (1, 2, 5, 20...) with live subtotal sync.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Bulk Pack Selector</td>
+                <td>Quick 1-tap ordering for 6-Bottle Family Packs, 12-Bottle Crates, and 24-Bottle Commercial Cartons.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Sticky Floating Cart Bar</td>
+                <td>Displays real-time bottle count and gross total with an instant "GENERATE BILL & PAY" call to action.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. LIVE AUTO-BILL & PAYMENT -->
+    <section id="customer-checkout">
+      <h2>5. Live Auto-Generated Bill & Multi-Channel Payment</h2>
+      <p>As requested, when the customer selects their desired juices and quantities, the application automatically constructs an itemized Tax Invoice with live calculations and processes payments seamlessly.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/customer_checkout_screen.png" alt="Customer Checkout Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Financial Gateway</div>
+          <h3 class="screen-title">Automated Billing & Digital Checkout</h3>
+          <p class="screen-description">Instantly breaks down unit rates, quantities, applicable taxes, delivery logistics, and discount codes.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Bill Component</th><th>Formula & Handling</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Itemized Breakdown</td>
+                <td>Lists each juice name, bottle volume, individual unit price, and extended line total.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Inline Stepper</td>
+                <td>Customer can fine-tune quantities or remove items directly within the bill before paying.</td>
+              </tr>
+              <tr>
+                <td class="option-name">GST Tax Calculation</td>
+                <td>Calculates statutory 5% beverage GST transparently.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Chilled Delivery Fee</td>
+                <td>Free cold-chain delivery for orders over ₹250; flat ₹30 fee for smaller orders.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Promo Code Engine</td>
+                <td>Entering "FRESH10" applies an immediate 10% factory direct rebate.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Payment Methods</td>
+                <td>⚡ UPI (GPay/PhonePe/Paytm), 💳 Credit/Debit Cards, 🏦 Net Banking, and 💵 Cash on Delivery.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. REAL-TIME FACTORY DASHBOARD -->
+    <section id="dashboard">
+      <h2>6. Executive Factory Management Dashboard</h2>
+      <p>The control center for plant managers. Displays real-time production throughput, operational efficiency, wastage metrics, and weekly volume bar charts.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/dashboard_screen.png" alt="Dashboard Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Plant Telemetry Hub</div>
+          <h3 class="screen-title">Real-Time Operations & Bar Analytics</h3>
+          <p class="screen-description">Monitors active bottling lines, quality control pass rates, pending orders, and 7-day output curves.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Widget / Card</th><th>Metric Tracked</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Factory Status Pill</td>
+                <td>Real-time line status: HTST 72°C OK, Line A Capping at 120 bpm, Cold storage at 3.8°C.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Production & Sales KPIs</td>
+                <td>Today's Liters produced, gross revenue, efficiency % (Target 95%), and wastage % (Target &lt;3%).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Weekly Output Bar Chart</td>
+                <td>Features clean non-repeating day intervals, touch tooltips with exact liter counts, and amber highlighting for Today.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Laser Scanner Shortcut</td>
+                <td>Top-right AppBar button immediately launches the full-screen batch barcode camera scanner.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. PRODUCTION & BATCH TRACKER -->
+    <section id="production">
+      <h2>7. Production Batches & Traceability Management</h2>
+      <p>Full manufacturing lifecycle tracking from raw fruit washing to final aseptic bottling and FSSAI release.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/production_screen.png" alt="Production Batches Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Batch Control</div>
+          <h3 class="screen-title">Active Batch Lifecycle & Quality Checks</h3>
+          <p class="screen-description">Every batch is assigned a unique alphanumeric code with operator attribution, volume yield, and QC gating.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Stage</th><th>Factory Criteria</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Planned</td>
+                <td>Raw fruits allocated from cold storage; ingredients verified according to recipe BOM.</td>
+              </tr>
+              <tr>
+                <td class="option-name">In Progress</td>
+                <td>Active processing in pulp extraction tank, pasteurizer, and automated bottling line.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Quality Check</td>
+                <td>Brix refractometer testing, pH titration, microbiological plating, and sensory tasting.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Completed</td>
+                <td>Passed QC; stock automatically incremented into Finished Goods inventory.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. INVENTORY & RAW MATERIALS -->
+    <section id="inventory">
+      <h2>8. Inventory & Cold-Chain Stock Management</h2>
+      <p>Real-time inventory ledger separating raw agricultural ingredients from packaged finished goods.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/inventory_screen.png" alt="Inventory Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Warehouse Ledger</div>
+          <h3 class="screen-title">Raw Fruits, Concentrates & Finished Goods</h3>
+          <p class="screen-description">Monitors minimum reorder thresholds, supplier lots, spoilage risks, and warehouse temperature logs.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Category</th><th>Managed Assets</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Raw Fruits</td>
+                <td>Alphonso Mangoes, Nagpur Oranges, Kinnaur Apples, Salem Guavas (weighed in Metric Tonnes / Kg).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Ingredients</td>
+                <td>Refined liquid sugar, citric acid, natural ascorbic acid, pectin stabilizers.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Packaging Materials</td>
+                <td>Food-grade PET bottles (250ml, 500ml, 1L), tamper-proof caps, shrink labels, 12-bottle corrugated crates.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Low Stock Alerts</td>
+                <td>Automatic push notifications to the manager when any critical fruit falls below 3 days of production demand.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. ORDERS & DISPATCH -->
+    <section id="orders">
+      <h2>9. Commercial Sales Orders & Fleet Dispatch</h2>
+      <p>Manages B2B distributor contracts, supermarket delivery schedules, credit limits, and official PDF Tax Invoices.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/orders_screen.png" alt="Orders Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Sales & Logistics</div>
+          <h3 class="screen-title">Order Processing & Delivery Pipeline</h3>
+          <p class="screen-description">Follows orders from placement through picking, packing, cold-chain van loading, and customer acknowledgment.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Feature</th><th>Operational Role</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Tax Invoice Generator</td>
+                <td>Generates formal A4 PDF Tax Invoices compliant with Indian GST laws, FSSAI numbering, and corporate seals.</td>
+              </tr>
+              <tr>
+                <td class="option-name">WhatsApp Dispatch Note</td>
+                <td>1-click sharing of formatted dispatch summaries directly to customer WhatsApp with driver details.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Invoice QR Verification</td>
+                <td>Embeds encrypted QR payload on bills for quick roadside inspection by logistics officers.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. ADVANCED LAB: RECIPE FORMULATION -->
+    <section id="recipe-formulation">
+      <h2>10. Recipe Formulation & Bill of Materials (BOM)</h2>
+      <p>Formulation tool for master beverage chemists to engineer exact fruit-to-water ratios, target Brix sugar, acidity, and calculate per-bottle production cost down to the paise.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/recipe_screen.png" alt="Recipe Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Beverage Science</div>
+          <h3 class="screen-title">BOM Formulation & Unit Cost Analysis</h3>
+          <p class="screen-description">Computes theoretical yield, pulp dilution factors, and packaging cost to determine profit margins against retail MRP.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Calculation</th><th>Scientific Metric</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Pulp Percentage</td>
+                <td>Configures minimum mandatory fruit content (e.g., 85% for pure nectar standards).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Target Brix (°Bx)</td>
+                <td>Predicts final soluble solids reading considering natural fruit fructose plus cane sugar additions.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Unit Cost Breakdown</td>
+                <td>Displays itemized costs for Fruit Pulp + Treated RO Water + Sugar + PET Bottle + Cap + Label + Packaging.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. ADVANCED LAB: LABEL DESIGNER -->
+    <section id="label-designer">
+      <h2>11. Smart Label & Barcode Designer</h2>
+      <p>Custom packaging designer allowing plant operators to generate ready-to-print bottle labels containing FSSAI licensing badges, nutritional panels, batch codes, and dynamic QR traceability stickers.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/label_designer_screen.png" alt="Label Designer Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Packaging Compliance</div>
+          <h3 class="screen-title">Regulatory Label & Barcode Engine</h3>
+          <p class="screen-description">Generates high-resolution packaging labels compliant with FSSAI Food Safety and Standards labeling mandates.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Label Element</th><th>Standard Specification</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Nutrition Fact Table</td>
+                <td>Energy (kcal), Carbohydrates, Natural Fruit Sugars, Vitamin C, Potassium, and Sodium per 100ml.</td>
+              </tr>
+              <tr>
+                <td class="option-name">FSSAI Green Veg Logo</td>
+                <td>Mandatory green veg emblem with official 14-digit factory license number (12423999000145).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Dynamic Traceability QR</td>
+                <td>Encodes manufacture timestamp, lot ID, and fruit farm source for scanning by consumers.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. ADVANCED LAB: IOT TELEMETRY -->
+    <section id="iot-telemetry">
+      <h2>12. Real-Time IoT Pasteurizer & Chiller Telemetry</h2>
+      <p>Live industrial sensor telemetry streaming from the factory floor to monitor pasteurization kill curves and cold-storage stability.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/iot_telemetry_screen.png" alt="IoT Telemetry Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Industry 4.0 Telemetry</div>
+          <h3 class="screen-title">Industrial Sensors & Thermal Safety</h3>
+          <p class="screen-description">Ensures microbial sterilization standards (F0 values) are met without compromising natural fruit flavors.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Sensor Machine</th><th>Telemetry Value & Safety Threshold</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">HTST Pasteurizer</td>
+                <td>72.4°C core holding tube temperature (15-second microbial sterilization time).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Cold Storage Vat #1</td>
+                <td>3.8°C chilled juice buffer holding temperature (Threshold: 2.0°C to 4.5°C).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Homogenizer Pressure</td>
+                <td>180 Bar hydraulic pressure for ultra-smooth texture and zero pulp sedimentation.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Automatic Safety Valve</td>
+                <td>Diverts juice back to raw holding tank if pasteurizer temperature ever drops below 71.5°C.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. ADVANCED LAB: AI FORECASTING -->
+    <section id="ai-engine">
+      <h2>13. AI Demand & Summer Heat Seasonality Engine</h2>
+      <p>Machine learning predictive model correlating local meteorological weather data (temperature, humidity, rainfall) with historical beverage sales to forecast raw fruit purchasing needs.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/ai_forecasting_screen.png" alt="AI Forecasting Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Predictive Intelligence</div>
+          <h3 class="screen-title">Weather-Correlated Procurement Forecasting</h3>
+          <p class="screen-description">Adjusts production quotas automatically based on seasonal heat spikes and local festival consumption patterns.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Prediction Model</th><th>Algorithm Output</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Summer Heat Multiplier</td>
+                <td>Calculates surge demand when temperature exceeds 36°C (+38% citrus volume increase).</td>
+              </tr>
+              <tr>
+                <td class="option-name">Procurement Advice</td>
+                <td>Recommends exact metric tonnage of fresh fruit crates to purchase from orchards 5 days in advance.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Spoilage Mitigation</td>
+                <td>Prevents raw fruit overstocking during monsoon dips, reducing biological waste to zero.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. ADVANCED LAB: BRIX CALCULATOR -->
+    <section id="brix-calc">
+      <h2>14. Brix Refractometer & ICUMSA Lab Calculator</h2>
+      <p>Quality control laboratory utility featuring temperature-compensated sugar refractometer reading conversions and dilution math.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/brix_screen.png" alt="Brix Calculator Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Food Science Lab</div>
+          <h3 class="screen-title">Optical Refractometer Temperature Correction</h3>
+          <p class="screen-description">Corrects raw optical prism readings against the international ICUMSA standard temperature of 20°C.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Formula Input</th><th>Standard Equation</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Observed Brix (°Bx)</td>
+                <td>Raw reading from analog or digital handheld prism refractometer.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Juice Temperature (°C)</td>
+                <td>Thermal sensor reading of juice sample taken at testing bench.</td>
+              </tr>
+              <tr>
+                <td class="option-name">ICUMSA Correction</td>
+                <td>Applies standard polynomial: ΔBrix = 0.00049 × (T - 20) + 0.00004 × (T - 20)².</td>
+              </tr>
+              <tr>
+                <td class="option-name">Water Dilution Formula</td>
+                <td>Calculates exact liters of treated water to blend: V_water = V_juice × ((Brix_curr / Brix_target) - 1).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. BATCH QR LASER SCANNER -->
+    <section id="qr-scanner">
+      <h2>15. Batch QR & Barcode Laser Scanner</h2>
+      <p>Integrated camera viewfinder barcode and QR code decoder with live laser animation and rapid physical batch verification.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/qr_scanner_screen.png" alt="QR Scanner Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">Traceability Scanner</div>
+          <h3 class="screen-title">Batch Verification & Instant Traceability Audit</h3>
+          <p class="screen-description">Decodes raw batch IDs, `JUICEFLOW:...` payloads, and carton tracking labels with 1-tap verification.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Scanner Feature</th><th>Functionality</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Laser Viewfinder</td>
+                <td>Interactive laser line animation with automated camera focal barcode recognition.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Manual Barcode Input Bar</td>
+                <td>Allows operators to type or paste batch codes if bottle labels are smeared or smudged.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Quick-Scan Demo Chips</td>
+                <td>1-tap demo batch chips (BATCH-2025-001, BATCH-2025-002) for rapid offline verification testing.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Traceability Certificate</td>
+                <td>Presents manufacture date, expiry, bottling staff, Brix score, and button to open full batch audit.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. FACTORY CIP & MAINTENANCE -->
+    <section id="maintenance">
+      <h2>16. Factory CIP & HACCP Equipment Sanitation</h2>
+      <p>Tracks Clean-In-Place (CIP) sanitation washdowns, filler nozzle sterilisations, bottle capper torque checks, and preventative machine maintenance.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/maintenance_screen.png" alt="Maintenance Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">HACCP Sanitation</div>
+          <h3 class="screen-title">Clean-In-Place (CIP) Logs & Line Service</h3>
+          <p class="screen-description">Maintains regulatory hygiene compliance logs mandatory for food and beverage plant audits.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Sanitation Routine</th><th>Chemical & Temperature Protocols</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Caustic Wash (NaOH 1.5%)</td>
+                <td>80°C hot alkali circulation for 20 minutes to dissolve fruit pulp residues and organic deposits.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Acid Rinse (HNO3 1.0%)</td>
+                <td>65°C nitric acid wash to eliminate mineral scale and water hardness deposits.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Peracetic Acid Sterilization</td>
+                <td>Final sanitizing rinse ensuring 0 CFU bacterial count before starting organic fruit batches.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Capper Torque Testing</td>
+                <td>Verification of bottle cap seal torque (18–22 in-lb) to prevent gas leakage and oxidation.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17. SETTINGS & PROFILE -->
+    <section id="settings">
+      <h2>17. Factory Settings & FSSAI Profile Configuration</h2>
+      <p>Central configuration center for company legal credentials, localization, and system testing.</p>
+
+      <div class="screenshot-showcase">
+        <div class="phone-mockup">
+          <img src="screenshots/settings_screen.png" alt="Settings Screen">
+        </div>
+        <div class="screenshot-details">
+          <div class="screen-badge">System Preferences</div>
+          <h3 class="screen-title">Factory Credentials & Application Settings</h3>
+          <p class="screen-description">Manages company trade name, FSSAI manufacturing license, tax GSTIN, and bilingual language switching.</p>
+
+          <table class="options-table">
+            <thead>
+              <tr><th>Setting Item</th><th>Configuration Details</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="option-name">Factory Legal Profile</td>
+                <td>Updates company legal name, plant street address, phone, email, and tax registration.</td>
+              </tr>
+              <tr>
+                <td class="option-name">FSSAI License Display</td>
+                <td>Configures official license string printed on all bottle labels and commercial invoices.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Bilingual Switcher</td>
+                <td>1-click toggle between English and Tamil (தமிழ்) across the entire UI and reporting documents.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Theme Customizer</td>
+                <td>Switch between Crisp Light Paper Mode and Deep Dark Plant Mode.</td>
+              </tr>
+              <tr>
+                <td class="option-name">Sign Out / Switch Mode</td>
+                <td>Safely terminates session and returns to the dual-role portal selector.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18. NATIVE PHONE NOTIFICATIONS -->
+    <section id="notifications">
+      <h2>18. Native Phone Push Notifications (24/7 Background)</h2>
+      <p>As requested, JuiceFlow features an integrated native Android push notification architecture that ensures operators and customers receive real audio/vibration alerts even when the mobile app is completely closed or running in the background.</p>
+
+      <div class="feature-card">
+        <h3>Notification Channels & System Permissions</h3>
+        <table class="options-table">
+          <thead>
+            <tr><th>Notification Channel</th><th>Priority</th><th>Trigger Scenario</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="option-name">🥤 Customer Orders & Payments</td>
+              <td><span class="badge-pill badge-green">MAXIMUM (Sound & Vibrate)</span></td>
+              <td>Fires immediately upon successful payment of a customer juice order with order ID and bottle count.</td>
+            </tr>
+            <tr>
+              <td class="option-name">🏭 Factory & Batch Floor Alerts</td>
+              <td><span class="badge-pill badge-amber">HIGH (Audio Alert)</span></td>
+              <td>Notifies the factory manager when an incoming order arrives or raw fruit stocks drop below minimum thresholds.</td>
+            </tr>
+            <tr>
+              <td class="option-name">⏰ Background Monitor</td>
+              <td><span class="badge-pill badge-blue">DEFAULT (Periodic Wakeup)</span></td>
+              <td>Periodic hourly cold-chain health ping checking plant temperature and active filler line status when app is closed.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
