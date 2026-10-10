@@ -8,6 +8,8 @@ import '../../providers/app_state_provider.dart';
 import '../customer/customer_store_screen.dart';
 import '../main_navigation_screen.dart';
 import '../setup/setup_wizard_screen.dart';
+import '../cloud/cloud_backend_screen.dart';
+import '../../core/services/supabase_service.dart';
 import '../../widgets/juiceflow_brand_header.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,25 +56,58 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
-  void _handleProducerLogin() {
+  Future<void> _handleProducerLogin() async {
     final appState = Provider.of<AppStateProvider>(context, listen: false);
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    // Verify staff credentials with Cloud Server / Local SQLite
+    final staffAuth = await SupabaseService.instance.loginStaff(
+      email: email,
+      password: password,
+    );
+
     String userName = 'Factory User';
-    if (_selectedRole == AppConstants.roleAdmin) {
-      userName = 'Ramasamy Kumar (Owner)';
-    } else if (_selectedRole == AppConstants.roleManager) {
-      userName = 'Suresh Pandian (Manager)';
-    } else if (_selectedRole == AppConstants.roleProduction) {
-      userName = 'Murugan (Production Head)';
-    } else if (_selectedRole == AppConstants.roleInventory) {
-      userName = 'Muthu Vel (Inventory)';
-    } else if (_selectedRole == AppConstants.roleSales) {
-      userName = 'Vignesh (Sales)';
+    String role = _selectedRole;
+
+    if (staffAuth != null) {
+      userName = staffAuth['name']?.toString() ?? userName;
+      role = staffAuth['role']?.toString() ?? role;
+      final isCloud = staffAuth['isCloudAuth'] == true;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isCloud
+                  ? '🟢 Cloud Authenticated: $userName ($role)'
+                  : '🟡 Local Factory Sign-in: $userName ($role)',
+            ),
+            backgroundColor: isCloud ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } else {
+      if (_selectedRole == AppConstants.roleAdmin) {
+        userName = 'Ramasamy Kumar (Owner)';
+      } else if (_selectedRole == AppConstants.roleManager) {
+        userName = 'Suresh Pandian (Manager)';
+      } else if (_selectedRole == AppConstants.roleProduction) {
+        userName = 'Murugan (Production Head)';
+      } else if (_selectedRole == AppConstants.roleInventory) {
+        userName = 'Muthu Vel (Inventory)';
+      } else if (_selectedRole == AppConstants.roleSales) {
+        userName = 'Vignesh (Sales)';
+      }
     }
 
-    appState.login(userName, _selectedRole);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-    );
+    appState.login(userName, role);
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+      );
+    }
   }
 
   void _handleCustomerEnter() {
@@ -143,13 +178,42 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                     ),
 
-                    // Test Notification Quick Button
-                    TextButton.icon(
-                      onPressed: _testPhoneNotification,
-                      icon: const Icon(Icons.notifications_active_outlined, size: 16, color: AppColors.primary),
+                    // Cloud Backend Status Button
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        visualDensity: VisualDensity.compact,
+                        side: BorderSide(
+                          color: SupabaseService.instance.isConnected
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFF59E0B),
+                        ),
+                      ),
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CloudBackendScreen()),
+                        );
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        SupabaseService.instance.isConnected
+                            ? Icons.cloud_done
+                            : Icons.cloud_off_outlined,
+                        size: 15,
+                        color: SupabaseService.instance.isConnected
+                            ? const Color(0xFF10B981)
+                            : const Color(0xFFF59E0B),
+                      ),
                       label: Text(
-                        isTa ? 'நோட்டிபிகேஷன் டெஸ்ட்' : 'Test Alert',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        SupabaseService.instance.isConnected ? 'Cloud 🟢' : 'Cloud 🟡',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: SupabaseService.instance.isConnected
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFF59E0B),
+                        ),
                       ),
                     ),
 
@@ -245,9 +309,76 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   // --- 1. PRODUCER / FACTORY MANAGEMENT FORM ---
   Widget _buildProducerForm(bool isDark, AppLocalizations loc, bool isTa) {
+    final supabase = SupabaseService.instance;
+    final isCloudConnected = supabase.isConnected;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Cloud Server Status Indicator Card
+        InkWell(
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CloudBackendScreen()),
+            );
+            setState(() {});
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            decoration: BoxDecoration(
+              color: isCloudConnected
+                  ? const Color(0xFF10B981).withOpacity(0.12)
+                  : const Color(0xFFF59E0B).withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isCloudConnected
+                    ? const Color(0xFF10B981).withOpacity(0.4)
+                    : const Color(0xFFF59E0B).withOpacity(0.4),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      isCloudConnected ? Icons.cloud_done : Icons.cloud_queue,
+                      size: 18,
+                      color: isCloudConnected
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFF59E0B),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isCloudConnected
+                          ? 'Cloud Server: Live Connected 🟢'
+                          : 'Cloud Server: Offline SQLite 🟡',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isCloudConnected
+                            ? (isDark ? const Color(0xFF34D399) : const Color(0xFF065F46))
+                            : (isDark ? const Color(0xFFFBBF24) : const Color(0xFF92400E)),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Manage ⚙️',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.amber[200] : AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
         // Role Selector Card
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
@@ -381,19 +512,36 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         ),
         const SizedBox(height: 14),
 
-        // Setup Wizard Shortcut
-        OutlinedButton.icon(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SetupWizardScreen()),
-            );
-          },
-          icon: const Icon(Icons.auto_fix_high, size: 16),
-          label: Text(
-            isTa ? 'முதல்முறை தொழிற்சாலை அமைவு விஸார்ட்' : 'Run First-Time Factory Setup Wizard',
-            style: const TextStyle(fontSize: 12),
-          ),
+        // Setup Wizard & Notification Test Row
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SetupWizardScreen()),
+                  );
+                },
+                icon: const Icon(Icons.auto_fix_high, size: 14),
+                label: Text(
+                  isTa ? 'அமைவு விஸார்ட்' : 'Setup Wizard',
+                  style: const TextStyle(fontSize: 11),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _testPhoneNotification,
+                icon: const Icon(Icons.notifications_active_outlined, size: 14, color: AppColors.primary),
+                label: Text(
+                  isTa ? 'அலர்ட் டெஸ்ட்' : 'Test Alert',
+                  style: const TextStyle(fontSize: 11),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

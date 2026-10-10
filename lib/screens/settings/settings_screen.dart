@@ -10,6 +10,8 @@ import '../../widgets/stat_badge.dart';
 import '../audit/audit_log_screen.dart';
 import '../auth/login_screen.dart';
 import '../setup/setup_wizard_screen.dart';
+import '../cloud/cloud_backend_screen.dart';
+import '../../core/services/supabase_service.dart';
 import 'factory_profile_screen.dart';
 import '../../widgets/cloud_update_card.dart';
 
@@ -198,6 +200,23 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
+          // Cloud Backend Server
+          _settingsTile(
+            title: 'Cloud Backend & Multi-Device Sync',
+            subtitle: SupabaseService.instance.isConnected
+                ? '🟢 Supabase PostgreSQL Live (${SupabaseService.instance.savedUrl})'
+                : '🟡 Offline-first SQLite active (Configure Supabase Cloud)',
+            icon: Icons.cloud_sync_rounded,
+            color: const Color(0xFF10B981),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CloudBackendScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+
           // Data Management Section
           const Text('Data & Offline Caching',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey)),
@@ -213,16 +232,22 @@ class SettingsScreen extends StatelessWidget {
                   children: [
                     const Text('Cloud Sync Mode', style: TextStyle(fontWeight: FontWeight.w600)),
                     StatBadge(
-                      label: 'Offline-First (Active)',
-                      color: AppColors.success,
+                      label: SupabaseService.instance.isConnected
+                          ? 'Cloud Live 🟢'
+                          : 'Offline-First (Active)',
+                      color: SupabaseService.instance.isConnected
+                          ? const Color(0xFF10B981)
+                          : AppColors.success,
                       fontSize: 10,
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Local SQLite engine active. Data persists safely without internet connectivity.',
-                  style: TextStyle(fontSize: 11.5, color: Colors.grey),
+                Text(
+                  SupabaseService.instance.isConnected
+                      ? 'Connected to live Supabase backend. Changes can be pushed/pulled across factory devices.'
+                      : 'Local SQLite engine active. Data persists safely without internet connectivity.',
+                  style: const TextStyle(fontSize: 11.5, color: Colors.grey),
                 ),
                 const Divider(height: 20),
                 Row(

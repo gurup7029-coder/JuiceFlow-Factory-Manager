@@ -19,6 +19,7 @@ import 'staff/staff_screen.dart';
 import 'notifications/notifications_screen.dart';
 import 'audit/audit_log_screen.dart';
 import 'settings/settings_screen.dart';
+import 'cloud/cloud_backend_screen.dart';
 import 'iot/iot_telemetry_screen.dart';
 import 'analytics/ai_forecasting_screen.dart';
 import 'tools/brix_calculator_screen.dart';
@@ -800,6 +801,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           const SizedBox(height: 8),
           _menuTile(
+            title: 'Cloud Backend & Database Sync',
+            subtitle: 'Supabase PostgreSQL cloud connection, bi-directional sync & logins',
+            icon: Icons.cloud_sync_rounded,
+            color: const Color(0xFF10B981),
+            badge: 'CLOUD',
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CloudBackendScreen()));
+            },
+          ),
+          const SizedBox(height: 8),
+          _menuTile(
             title: loc.translate('settings'),
             subtitle: 'Factory profile, English/Tamil language & theme',
             icon: Icons.settings_rounded,
@@ -966,6 +978,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   backgroundColor: Color(0xFF10B981),
                 ),
               );
+            },
+          ),
+          const SizedBox(height: 8),
+          _menuTile(
+            title: 'Cloud Backend & Multi-Device Sync',
+            subtitle: 'Supabase PostgreSQL cloud connection, bi-directional sync & logins',
+            icon: Icons.cloud_sync_rounded,
+            color: const Color(0xFF10B981),
+            badge: 'CLOUD',
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CloudBackendScreen()));
             },
           ),
           const SizedBox(height: 8),

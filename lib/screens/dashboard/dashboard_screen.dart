@@ -16,8 +16,6 @@ import '../production/batch_detail_screen.dart';
 import '../orders/create_order_screen.dart';
 import '../iot/iot_telemetry_screen.dart';
 import '../analytics/ai_forecasting_screen.dart';
-import '../tools/brix_calculator_screen.dart';
-import '../tools/qr_scanner_screen.dart';
 import '../tools/label_designer_screen.dart';
 import '../recipes/recipe_formulation_screen.dart';
 import '../staff/shift_attendance_screen.dart';
@@ -25,7 +23,6 @@ import '../dispatch/fleet_dispatch_screen.dart';
 import '../customers/credit_ledger_screen.dart';
 import '../customer/customer_store_screen.dart';
 import '../inventory/stock_adjustment_screen.dart';
-import '../../widgets/juice_flowing_3d_tumbler.dart';
 
 class DashboardScreen extends StatelessWidget {
   final Function(int)? onNavigateTab;

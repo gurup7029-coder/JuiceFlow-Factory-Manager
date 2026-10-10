@@ -230,7 +230,7 @@ class _JuiceFlowing3dTumblerState extends State<JuiceFlowing3dTumbler>
               child: Image.asset(
                 'assets/images/orchard_canopy.jpg',
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
               ),
             ),
           ),
@@ -343,7 +343,7 @@ class _JuiceFlowing3dTumblerState extends State<JuiceFlowing3dTumbler>
                 const SizedBox(height: 6),
                 AnimatedBuilder(
                   animation: _fillAnimation,
-                  builder: (_, __) {
+                  builder: (context, child) {
                     String phase = '1. Ripe Orchard Fruits Dropping...';
                     if (_fillAnimation.value > 0.15 && _fillAnimation.value < 0.65) {
                       phase = '2. Fresh Extraction & Vortex Juicing...';
